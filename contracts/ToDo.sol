@@ -1,34 +1,58 @@
-// SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.24;
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.9;
 
-// Uncomment this line to use console.log
-// import "hardhat/console.sol";
 
-contract Lock {
-    uint public unlockTime;
-    address payable public owner;
+contract TODo{
 
-    event Withdrawal(uint amount, uint when);
+    struct HouseActivities{
 
-    constructor(uint _unlockTime) payable {
-        require(
-            block.timestamp < _unlockTime,
-            "Unlock time should be in the future"
-        );
+      string  tittle;
+      string  description;
+      bool    isdone;  
 
-        unlockTime = _unlockTime;
-        owner = payable(msg.sender);
     }
 
-    function withdraw() public {
-        // Uncomment this line, and the import of "hardhat/console.sol", to print a log in your terminal
-        // console.log("Unlock time is %o and block timestamp is %o", unlockTime, block.timestamp);
+   HouseActivities[] public Cleaning; 
 
-        require(block.timestamp >= unlockTime, "You can't withdraw yet");
-        require(msg.sender == owner, "You aren't the owner");
 
-        emit Withdrawal(address(this).balance, block.timestamp);
+   function setACTivities( string memory _tittle, string memory _description, bool _isdone) external {
 
-        owner.transfer(address(this).balance);
-    }
+      Cleaning.push(HouseActivities( _tittle, _description,_isdone ));
+
+   }
+
+
+   function updatingTittleandDescription(uint _index, string memory _tittle, string memory _description )external {
+
+      HouseActivities storage todo = Cleaning[_index];
+
+      todo.tittle = _tittle;
+
+      todo.description = _description; 
+
+   }
+
+
+   function toggleiSDone(uint _index)external {
+
+      Cleaning[_index].isdone = !Cleaning[_index].isdone;
+
+   }
+
+
+
+  function Deleting()external {
+
+    Cleaning.pop();
+
+  }
+
+   function allTODO()external view returns (HouseActivities[] memory){
+
+    return Cleaning;
+
+   }
+
 }
+
+
